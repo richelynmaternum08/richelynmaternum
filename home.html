@@ -1,0 +1,303 @@
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConnectHub - Home</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+  }
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    background-color: #1877f2;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 50px;
+    z-index: 999;
+  }
+  nav a {
+    color: #1877f2;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  nav a:hover, nav a.active {
+    background-color: #e7f3ff;
+  }
+  .content {
+    display: flex;
+    margin-top: 20px;
+  }
+  .feed {
+    flex: 2;
+    margin-right: 20px;
+  }
+  .sidebar {
+    flex: 1;
+  }
+  .post, .create-post, .trending, .suggestions {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .post-author {
+    font-weight: bold;
+  }
+  .post-content {
+    margin-bottom: 10px;
+  }
+  .post-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .post-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  .action-btn {
+    background: none;
+    border: none;
+    color: #65676b;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+  .action-btn svg {
+    margin-right: 5px;
+  }
+  .create-post textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 10px;
+    resize: none;
+    margin-bottom: 10px;
+  }
+  .create-post button {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .create-post button:hover {
+    background-color: #166fe5;
+  }
+  .trending h3, .suggestions h3 {
+    margin-top: 0;
+    color: #1877f2;
+  }
+  .trending ul, .suggestions ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  .trending li, .suggestions li {
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+  }
+  .suggestion-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+</style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo">ConnectHub</div>
+    </header>
+    <nav>
+      <a href="/home.html">Home</a>
+      <a href="/profile.html">Profile</a>
+      <a href="/messages.html">Messages</a>
+      <a href="/notifications.html">Notifications</a>
+    </nav>
+    <div class="content">
+      <main class="feed">
+        <div class="create-post">
+          <textarea placeholder="What's on your mind?"></textarea>
+          <button>Post</button>
+        </div>
+        <div id="post-feed"></div>
+      </main>
+      <aside class="sidebar">
+        <div class="trending">
+          <h3>Trending Topics</h3>
+          <ul id="trending-topics"></ul>
+        </div>
+        <div class="suggestions">
+          <h3>People You May Know</h3>
+          <ul id="suggestions-list"></ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const postFeed = document.getElementById('post-feed');
+    const trendingTopics = document.getElementById('trending-topics');
+    const suggestionsList = document.getElementById('suggestions-list');
+
+    // Simulated post data
+    const posts = [
+      { id: 1, author: 'Jhermie Bangot', content: 'Just finished a great book! Anyone have recommendations for what to read next?', likes: 15, comments: 3, image: 'book.jfif' },
+      { id: 2, author: 'John Bataycan', content: 'Beautiful day for a hike! 🏞️', likes: 24, comments: 7, image: 'hike.jpg' },
+      { id: 3, author: 'Jeric Loque', content: 'New recipe alert! Check out my latest vegan pasta dish. 🍝', likes: 18, comments: 5, image: 'recipe.jfif' }
+    ];
+
+    // Simulated trending topics
+    const trends = ['#SummerVibes', '#TechTalk', '#HealthyLiving', '#ArtistsUnite', '#BookLovers'];
+
+    // Simulated user suggestions
+    const suggestions = [
+      { name: 'claire misperos', mutualFriends: 3 },
+      { name: 'Ella Jane Felias', mutualFriends: 5 },
+      { name: 'Trixy Galve', mutualFriends: 2 }
+    ];
+
+    function createPostElement(post) {
+      const postElement = document.createElement('div');
+      postElement.className = 'post fade-in';
+      postElement.innerHTML = `
+        <div class="post-header">
+          <img class="post-avatar" src="mingyu.jpg" alt="Avatar of ${post.author}">
+          <span class="post-author">${post.author}</span>
+        </div>
+        <div class="post-content">${post.content}</div>
+        ${post.image ? `<img class="post-image" src="${post.image}" alt="Post image">` : ''}
+        <div class="post-actions">
+          <button class="action-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.5 12a9.5 9.5 0 1 1-19 0 9.5 9.5 0 0 1 19 0zM10.5 8v8l6-4-6-4z"/>
+            </svg>
+            Like (${post.likes})
+          </button>
+          <button class="action-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"/>
+            </svg>
+            Comment (${post.comments})
+          </button>
+          <button class="action-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+            </svg>
+            Share
+          </button>
+        </div>
+      `;
+      return postElement;
+    }
+
+    function displayPosts() {
+      posts.forEach(post => {
+        postFeed.appendChild(createPostElement(post));
+      });
+    }
+
+    function displayTrendingTopics() {
+      trends.forEach(topic => {
+        const li = document.createElement('li');
+        li.textContent = topic;
+        trendingTopics.appendChild(li);
+      });
+    }
+
+    function displaySuggestions() {
+      suggestions.forEach(suggestion => {
+        const li = document.createElement('li');
+        li.className = 'suggestion-item';
+        li.innerHTML = `
+          <img class="suggestion-avatar" src="lisa.jfif" alt="ella jane felias"> <!-- Corrected to ${suggestion.name} -->
+          <div>
+            <div>${suggestion.name}</div>
+            <small>${suggestion.mutualFriends} mutual friends</small>
+          </div>
+        `;
+        suggestionsList.appendChild(li);
+      });
+    }
+
+    // Initialize the app
+    displayPosts();
+    displayTrendingTopics();
+    displaySuggestions();
+
+    // Simulated post creation
+    const postButton = document.querySelector('.create-post button');
+    const postTextarea = document.querySelector('.create-post textarea');
+
+    postButton.addEventListener('click', () => {
+      const content = postTextarea.value.trim();
+      if (content) {
+        const newPost = {
+          id: posts.length + 1,
+          author: 'You',
+          content: content,
+          likes: 0,
+          comments: 0,
+          image: Math.random() > 0.5 ? `math.webp` : null
+        };
+        posts.unshift(newPost);
+        postFeed.insertBefore(createPostElement(newPost), postFeed.firstChild);
+        postTextarea.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

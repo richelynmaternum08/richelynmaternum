@@ -1,0 +1,239 @@
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConnectHub - Notifications</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+  }
+  .app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    background-color: #1877f2;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 50px;
+    z-index: 999;
+  }
+  nav a {
+    color: #1877f2;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  nav a:hover, nav a.active {
+    background-color: #e7f3ff;
+  }
+  .notifications-container {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
+  .notification {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #e4e6eb;
+    transition: background-color 0.3s;
+  }
+  .notification:last-child {
+    border-bottom: none;
+  }
+  .notification:hover {
+    background-color: #f0f2f5;
+  }
+  .notification-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  .notification-content {
+    flex-grow: 1;
+  }
+  .notification-text {
+    margin-bottom: 5px;
+  }
+  .notification-time {
+    font-size: 12px;
+    color: #65676b;
+  }
+  .notification-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  .unread {
+    background-color: #e7f3ff;
+  }
+  .unread-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #1877f2;
+    border-radius: 50%;
+    margin-left: 10px;
+  }
+  .load-more {
+    text-align: center;
+    padding: 15px;
+    background-color: #f0f2f5;
+    cursor: pointer;
+    font-weight: bold;
+    color: #1877f2;
+  }
+  .load-more:hover {
+    background-color: #e4e6eb;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo">ConnectHub</div>
+  </header>
+  <nav>
+    <a href="/home.html">Home</a>
+    <a href="/profile.html">Profile</a>
+    <a href="/messages.html">Messages</a>
+    <a href="/notifications.html">Notifications</a>
+  </nav>
+  
+  <div class="app-container">
+    <div class="notifications-container" id="notifications-container">
+      <!-- Notifications will be dynamically added here -->
+    </div>
+    <div class="load-more" id="load-more">Load More</div>
+  </div>
+
+  <script>
+    const notifications = [
+      {
+        id: 1,
+        avatar: "arlinda.jfif",
+        text: "arlinda liked your post",
+        time: "2 hours ago",
+        unread: true,
+        icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+               </svg>`
+      },
+      {
+        id: 2,
+        avatar: "pf.jpg",
+        text: "sahara commented on your photo",
+        time: "5 hours ago",
+        unread: true,
+        icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                 <path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM17 11h-4v4h-2v-4H7V9h4V5h2v4h4v2z"/>
+               </svg>`
+      },
+      {
+        id: 3,
+        avatar: "sunset.jfif",
+        text: "mika tagged you in a post",
+        time: "1 day ago",
+        unread: false,
+        icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                 <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+               </svg>`
+      },
+      {
+        id: 4,
+        avatar: "mae.jpg",
+        text: "jhermae sent you a friend request",
+        time: "2 days ago",
+        unread: false,
+        icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                 <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>
+               </svg>`
+      }
+    ];
+
+    const notificationsContainer = document.getElementById('notifications-container');
+    const loadMoreButton = document.getElementById('load-more');
+
+    function createNotificationElement(notification) {
+      const notificationElement = document.createElement('div');
+      notificationElement.className = `notification ${notification.unread ? 'unread' : ''}`;
+      notificationElement.innerHTML = `
+        <img class="notification-avatar" src="${notification.avatar}" alt="User avatar">
+        <div class="notification-content">
+          <div class="notification-text">
+            ${notification.icon}
+            ${notification.text}
+            ${notification.unread ? '<span class="unread-dot"></span>' : ''}
+          </div>
+          <div class="notification-time">${notification.time}</div>
+        </div>
+      `;
+      return notificationElement;
+    }
+
+    function loadNotifications() {
+      notifications.forEach(notification => {
+        notificationsContainer.appendChild(createNotificationElement(notification));
+      });
+    }
+
+    loadNotifications();
+
+    loadMoreButton.addEventListener('click', () => {
+      // Simulate loading more notifications
+      const newNotifications = [
+        {
+          id: 5,
+          avatar: "mingyu.jpg",
+          text: "mingyu mentioned you in a comment",
+          time: "3 days ago",
+          unread: false,
+          icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                   <path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM17 11h-4v4h-2v-4H7V9h4V5h2v4h4v2z"/>
+                 </svg>`
+        },
+        {
+          id: 6,
+          avatar: "olivia and taylor.jpg",
+          text: "Olivia Taylor invited you to an event",
+          time: "4 days ago",
+          unread: false,
+          icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                   <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>
+                 </svg>`
+        }
+      ];
+
+      newNotifications.forEach(notification => {
+        notificationsContainer.appendChild(createNotificationElement(notification));
+      });
+
+      // Remove the "Load More" button after loading all notifications
+      loadMoreButton.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
